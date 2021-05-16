@@ -24,10 +24,10 @@ func _on_Bullet_area_entered(area : Area2D):
 
 func _on_Bullet_body_entered(body):
 #	print(body.get_children())
-	if body is Glass:
+	if body is Glass and not body.broken:
 		body.breakWindow()
 		vel = vel.rotated(PI/6)
-	elif body is Player:
+	else:
 		var splat : Particles2D = splatRes.instance()
 		splat.global_position = global_position
 		splat.rotate(vel.angle() + PI)
