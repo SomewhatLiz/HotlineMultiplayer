@@ -1,64 +1,95 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Root.gd" type="Script" id=1]
-[ext_resource path="res://resources/fonts/Pacifico-200px.tres" type="DynamicFont" id=2]
-[ext_resource path="res://components/Button/Button.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Art/Fonts/wide_awake/WIDEAWAKE.TTF" type="DynamicFontData" id=2]
+[ext_resource path="res://Art/Themes/PauseMenu.tres" type="Theme" id=3]
 [ext_resource path="res://resources/fonts/RobotoLight-24px.tres" type="DynamicFont" id=4]
 [ext_resource path="res://components/Game/Game.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Art/Menu/sprHouses_strip6.png" type="Texture" id=6]
+[ext_resource path="res://Art/Menu/sprHouseSilhouettes_strip3.png" type="Texture" id=7]
+[ext_resource path="res://Art/Menu/sprPalmTrees_strip8.png" type="Texture" id=8]
 
-[node name="Root" type="Control"]
+[sub_resource type="DynamicFont" id=1]
+size = 100
+outline_size = 3
+font_data = ExtResource( 2 )
+
+[sub_resource type="Animation" id=2]
+resource_name = "Sway"
+length = 8.0
+loop = true
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("ParallaxBackground/PalmTrees/sprPalmTrees_strip8:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 4, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0, -4, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 2, 3.9, 6, 8 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath("ParallaxBackground/PalmTrees/sprPalmTrees_strip9:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, -4, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0, 4, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 2, 3.9, 6, 8 )
+}
+
+[node name="Main" type="Node"]
+
+[node name="Root" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
+theme = ExtResource( 3 )
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+gamepath = NodePath("../../Main/Game")
+menupath = NodePath("../../Main/Root/CanvasLayer/Menu")
+namepath = NodePath("../../Main/Root/CanvasLayer/Menu/Name")
+camerapath = NodePath("../../Main/Root/Camera2D")
+parallaxpath = NodePath("../../Main/Root/ParallaxBackground")
+cameraSpeed = 5.0
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="Root"]
+
+[node name="Menu" type="Control" parent="Root/CanvasLayer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_top = 1.12247
+margin_bottom = 1.12244
+mouse_filter = 1
+theme = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Menu" type="Control" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-
-[node name="Title" type="Label" parent="Menu"]
+[node name="Title" type="Label" parent="Root/CanvasLayer/Menu"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -280.0
-margin_top = -340.0
-margin_right = 280.0
-margin_bottom = 12.0
+margin_left = -201.0
+margin_top = -278.0
+margin_right = 228.0
+margin_bottom = -75.0
 rect_rotation = -8.04779
 rect_pivot_offset = Vector2( 280, 176 )
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Draw!"
+text = "Hotline
+Multiplayer"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Host" parent="Menu" instance=ExtResource( 3 )]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -115.5
-margin_top = -37.0
-margin_right = 115.5
-margin_bottom = 37.0
-text = "Host"
-size = 1
-
-[node name="Join" parent="Menu" instance=ExtResource( 3 )]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -115.5
-margin_top = 60.0
-margin_right = 115.5
-margin_bottom = 134.0
-text = "Join"
-size = 1
-
-[node name="Footer" type="Label" parent="Menu"]
+[node name="Footer" type="Label" parent="Root/CanvasLayer/Menu"]
 modulate = Color( 0, 0, 0, 1 )
 anchor_top = 1.0
 anchor_right = 1.0
@@ -69,7 +100,111 @@ custom_fonts/font = ExtResource( 4 )
 text = "gotm.io"
 align = 1
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="LineEdit" parent="Root/CanvasLayer/Menu"]
+anchor_left = 0.5
+anchor_top = 0.871
+anchor_right = 0.5
+anchor_bottom = 0.871
+margin_left = -212.691
+margin_top = -30.0
+margin_right = 193.309
+margin_bottom = 31.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Root/CanvasLayer/Menu"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -198.0
+margin_top = -59.0
+margin_right = 183.0
+margin_bottom = 321.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Host" type="Button" parent="Root/CanvasLayer/Menu/VBoxContainer"]
+margin_right = 381.0
+margin_bottom = 28.0
+mouse_default_cursor_shape = 2
+text = "Host"
+
+[node name="Join" type="Button" parent="Root/CanvasLayer/Menu/VBoxContainer"]
+margin_top = 32.0
+margin_right = 381.0
+margin_bottom = 60.0
+mouse_default_cursor_shape = 2
+text = "Join"
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="Root"]
+
+[node name="SkyScrapers" type="ParallaxLayer" parent="Root/ParallaxBackground"]
+position = Vector2( 185.307, 90.8716 )
+motion_scale = Vector2( 0.25, 1 )
+motion_mirroring = Vector2( 1536, 0 )
+
+[node name="sprHouses_strip6" type="Sprite" parent="Root/ParallaxBackground/SkyScrapers"]
+position = Vector2( 178, 420.128 )
+texture = ExtResource( 6 )
+
+[node name="sprHouses_strip7" type="Sprite" parent="Root/ParallaxBackground/SkyScrapers"]
+position = Vector2( 946, 420.128 )
+texture = ExtResource( 6 )
+
+[node name="Town" type="ParallaxLayer" parent="Root/ParallaxBackground"]
+motion_scale = Vector2( 0.75, 1 )
+motion_mirroring = Vector2( 1296, 0 )
+
+[node name="sprHouseSilhouettes_strip3" type="Sprite" parent="Root/ParallaxBackground/Town"]
+position = Vector2( 217.287, 618.531 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 7 )
+
+[node name="sprHouseSilhouettes_strip4" type="Sprite" parent="Root/ParallaxBackground/Town"]
+position = Vector2( 649.287, 618.531 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 7 )
+
+[node name="sprHouseSilhouettes_strip5" type="Sprite" parent="Root/ParallaxBackground/Town"]
+position = Vector2( 1081.29, 618.531 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 7 )
+
+[node name="PalmTrees" type="ParallaxLayer" parent="Root/ParallaxBackground"]
+position = Vector2( -14.2705, 23.7841 )
+motion_mirroring = Vector2( 1312, 0 )
+
+[node name="sprPalmTrees_strip8" type="Sprite" parent="Root/ParallaxBackground/PalmTrees"]
+position = Vector2( 276.481, 514.286 )
+texture = ExtResource( 8 )
+
+[node name="sprPalmTrees_strip9" type="Sprite" parent="Root/ParallaxBackground/PalmTrees"]
+position = Vector2( 962.146, 421.053 )
+texture = ExtResource( 8 )
+
+[node name="Camera2D" type="Camera2D" parent="Root"]
+position = Vector2( 873.13, 320 )
+current = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Root"]
+autoplay = "Sway"
+anims/Sway = SubResource( 2 )
+
+[node name="Timer" type="Timer" parent="Root"]
+process_mode = 0
+wait_time = 5.0
+autostart = true
+
+[node name="Tween" type="Tween" parent="Root"]
 
 [node name="Game" parent="." instance=ExtResource( 5 )]
-[connection signal="clicked" from="Menu/Host" to="." method="_on_Host_clicked"]
-[connection signal="clicked" from="Menu/Join" to="." method="_on_Join_clicked"]
+[connection signal="pressed" from="Root/CanvasLayer/Menu/VBoxContainer/Host" to="Root" method="_on_Host_pressed"]
+[connection signal="pressed" from="Root/CanvasLayer/Menu/VBoxContainer/Join" to="Root" method="_on_Join_pressed"]
+[connection signal="timeout" from="Root/Timer" to="Root" method="_on_Timer_timeout"]

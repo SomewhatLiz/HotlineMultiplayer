@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Magnum.wav-e0996af9bd7983e29676fe6a0578a29b.sample"
+
+[deps]
+
+source_file="res://Sounds/Gunshots/Magnum.wav"
+dest_files=[ "res://.import/Magnum.wav-e0996af9bd7983e29676fe6a0578a29b.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

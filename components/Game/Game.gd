@@ -1,6 +1,8 @@
-extends Control
+extends Node2D
 
 const PORT = 8070
+
+var playerName : String
 
 var playerRes := load("res://Scenes/Player/Player.tscn")
 
@@ -8,85 +10,86 @@ var _mouse_start: Vector2
 var _last_color: int = -1
 var _color: int
 
+onready var spawnLocs = $Spawns
+
+#remote var G.players := {}
+
 func host():
+	playerName = "host"
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(PORT)
 	get_tree().set_network_peer(peer)
-	
-	
 	get_tree().connect("network_peer_connected", self, "_player_connected")
-	
-	_last_color = (_last_color + 1) % 8
-	_set_color(_last_color)
-
+	_player_connected(get_tree().get_network_unique_id())
+	print(get_tree().get_network_unique_id())
+	print("host")
+	for child in get_children():
+		print(child.name)
 
 func join():
+	playerName = "peer"
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client("127.0.0.1", PORT)
 	get_tree().set_network_peer(peer)
-	
-	$Spinner.show()
-	$Instructions.hide()
 	yield(get_tree(), "connected_to_server")
-	$Spinner.hide()
-	$Instructions.show()
+	print(get_tree().get_network_unique_id()) 
+	print("join")
 
+# After host/join, only called on host
+func _player_connected(id : int):
+	print(id)
+	# Handle player connecting
+	for pid in G.players:
+		var playerInfo = G.players[pid]
+		print(playerInfo)
+		
+		# Spawning old guys on our new guy, Get everyone else's names
+		#TODO: Refactor getting teams so we dont have to index into the lists 
+		rpc_id(id, "register_player", pid, G.getTeam(pid), G.getName(pid))
+	# new guy's id, send his name
+	rpc("register_player", id, 0, playerName)
+	# Send our name
+	rpc("req_name")
 
-func _player_connected(id):
-	_last_color = (_last_color + 1) % 8
-	rpc_id(id, "_set_color", _last_color)
+remote func req_name():
+	rpc("setName", playerName)
 
-remotesync func _spawn_player():
-	var new_player := playerRes.instance()
-
-remotesync func _init_canvas_color(positions, color):
-	for position in positions:
-		$Canvas.set_cellv(position, color)
-
-
-remotesync func _set_color(color):
-	_color = color
-
-
-# http://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C
-remotesync func _rasterize_line(x0: int, y0: int, x1: int, y1: int, color: int) -> void:
-	var dx: int = abs(x1 - x0)
-	var dy: int = abs(y1 - y0)
-	var sx: int = 1 if x0 < x1 else -1
-	var sy: int = 1 if y0 < y1 else -1
-	var err: int = (dx if dx > dy else -dy) / 2
-	var e2: int
-	while true:
-		$Canvas.set_cell(x0, y0, color)
-		if x0 == x1 and y0 == y1:
-			break
-		e2 = err
-		if e2 > -dx:
-			err -= dy
-			x0 += sx
-		if e2 < dy:
-			err += dx
-			y0 += sy
-
-
-func _on_Background_gui_input(event):
-	if $Spinner.visible:
-		return
+func spawn(id: int):
+	var p = playerRes.instance()
+	p.name = str(id)
+	p.set_network_master(id, true)
+	var spawnPos = spawnLocs.get_child(G.rng.randi() % spawnLocs.get_child_count())
+	p.position = spawnPos.position 
 	
-	if event is InputEventMouseButton:
-		if event.pressed and event.button_index == BUTTON_MASK_LEFT:
-			_mouse_start = event.position
-	elif event is InputEventMouseMotion:
-		if event.button_mask & BUTTON_MASK_LEFT:
-			var v0 = _mouse_start / $Canvas.scale
-			var v1 = event.position / $Canvas.scale
-			var x0: int = int(v0.x)
-			var y0: int = int(v0.y)
-			var x1: int = int(v1.x)
-			var y1: int = int(v1.y)
-			rpc("_rasterize_line", x0, y0, x1, y1, _color)
-			_mouse_start = event.position
+	add_child(p)
 
+remotesync func register_player(id : int, team : int, playerName : String):
+	# Sync all G.players
+	print("Register as ", playerName)
+	if not id in G.players:
+#		Add player to FFA team when they first join
+		G.players[id] = [team, playerName]
+		spawn(id)
+		setNameLocal(id, playerName)
+		# [1] = [0, "aaa"]
+
+remotesync func setName(newPlayerName: String):
+	var senderId = get_tree().get_rpc_sender_id()
+	print("Sett as ", newPlayerName)
+	setNameLocal(senderId, newPlayerName)
+
+func setNameLocal(pid : int, newPlayerName : String):
+	G.players[pid][1] = newPlayerName
+	G.game.get_node(str(pid)).teamLabel.text = newPlayerName
+
+
+#remote func spawn_player(id : int):
+#	# Spawn single player
+#	for playerInfo in G.players:
+#		rpc_id(id, "spawn", playerInfo)
+#	rpc("register_player", id)
 
 func _on_CloseInstructions_clicked(instance):
 	$Instructions.hide()
+	
+

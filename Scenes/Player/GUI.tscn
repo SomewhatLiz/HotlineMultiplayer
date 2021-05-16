@@ -1,0 +1,138 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Scenes/Player/GUI.gd" type="Script" id=1]
+[ext_resource path="res://Art/Fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 1, 1, 1, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.8, 0.8, 0.8, 0.231373 )
+expand_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.603922, 0.603922, 0.603922, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 1, 1, 1, 0 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.72549, 0.403922, 1, 1 )
+border_color = Color( 0, 0, 0, 1 )
+corner_detail = 1
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.996078, 0.443137, 0.807843, 1 )
+corner_detail = 1
+expand_margin_bottom = 3.0
+shadow_color = Color( 0, 0, 0, 0 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 25
+outline_size = 2
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 2 )
+
+[sub_resource type="Theme" id=7]
+default_font = SubResource( 6 )
+Button/colors/font_color = Color( 1, 1, 1, 1 )
+Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
+Button/colors/font_color_hover = Color( 1, 1, 1, 1 )
+Button/colors/font_color_pressed = Color( 1, 1, 1, 1 )
+Button/constants/hseparation = 2
+Button/fonts/font = null
+Button/styles/disabled = null
+Button/styles/focus = SubResource( 1 )
+Button/styles/hover = SubResource( 2 )
+Button/styles/normal = SubResource( 3 )
+Button/styles/pressed = SubResource( 2 )
+ProgressBar/colors/font_color = Color( 0.94, 0.94, 0.94, 1 )
+ProgressBar/colors/font_color_shadow = Color( 0, 0, 0, 1 )
+ProgressBar/fonts/font = null
+ProgressBar/styles/bg = SubResource( 4 )
+ProgressBar/styles/fg = SubResource( 5 )
+
+[sub_resource type="Shader" id=8]
+code = "shader_type canvas_item;
+
+uniform float size_x = 0.008;
+uniform float size_y = 0.008;
+
+void fragment() {
+	vec2 uv = SCREEN_UV;
+	uv -= mod(uv, vec2(size_x, size_y));
+
+	COLOR.rgb = textureLod(SCREEN_TEXTURE, uv, 0.0).rgb;
+}"
+custom_defines = ""
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = SubResource( 8 )
+shader_param/size_x = 0.001
+shader_param/size_y = 0.001
+
+[node name="GUI" type="CanvasLayer"]
+script = ExtResource( 1 )
+ammoPath = NodePath("Control/VBoxContainer/ammoCount")
+healthPath = NodePath("Control/VBoxContainer/healthBar")
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+anchor_left = 0.01
+anchor_top = 0.98
+anchor_right = 0.01
+anchor_bottom = 0.98
+margin_left = -0.4
+margin_top = -47.6
+margin_right = 302.6
+margin_bottom = 0.400024
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ammoCount" type="Label" parent="Control/VBoxContainer"]
+margin_right = 303.0
+margin_bottom = 22.0
+text = "0/0 Rnds"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="healthBar" type="ProgressBar" parent="Control/VBoxContainer"]
+margin_top = 26.0
+margin_right = 303.0
+margin_bottom = 48.0
+max_value = 15.0
+value = 5.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource( 9 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}

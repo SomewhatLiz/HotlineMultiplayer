@@ -1,0 +1,43 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Art/Themes/PauseMenu.tres" type="Theme" id=1]
+[ext_resource path="res://Scenes/TeamLayout/TeamLayout.gd" type="Script" id=2]
+
+[node name="TeamLayout" type="VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TeamNameButton" type="Button" parent="."]
+margin_right = 81.0
+margin_bottom = 15.0
+text = "Team Name"
+align = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_top = 19.0
+margin_right = 81.0
+margin_bottom = 100.0
+
+[node name="Bumper" type="Control" parent="HBoxContainer"]
+margin_right = 25.0
+margin_bottom = 81.0
+rect_min_size = Vector2( 25, 81 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.03
+
+[node name="PlayerNames" type="VBoxContainer" parent="HBoxContainer"]
+margin_left = 29.0
+margin_right = 81.0
+margin_bottom = 81.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="TeamNameButton" to="." method="_on_TeamNameButton_pressed"]
