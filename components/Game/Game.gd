@@ -15,7 +15,6 @@ onready var spawnLocs = $Spawns
 #remote var G.players := {}
 
 func host():
-	playerName = "host"
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(PORT)
 	get_tree().set_network_peer(peer)
@@ -27,7 +26,6 @@ func host():
 		print(child.name)
 
 func join():
-	playerName = "peer"
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client("127.0.0.1", PORT)
 	get_tree().set_network_peer(peer)

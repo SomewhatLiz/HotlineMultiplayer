@@ -8,19 +8,24 @@
 script = ExtResource( 1 )
 
 [node name="Item" parent="." instance=ExtResource( 3 )]
-position = Vector2( 206, 314 )
+position = Vector2( 107.837, 248.873 )
 weaponName = "shotgun"
 ammoCount = 3
 
 [node name="Item2" parent="." instance=ExtResource( 3 )]
-position = Vector2( 204, 394 )
+position = Vector2( 85.0719, 102.343 )
 weaponName = "shotgun"
 ammoCount = 3
 
 [node name="Item3" parent="." instance=ExtResource( 3 )]
-position = Vector2( 200, 244 )
+position = Vector2( 434.274, 67.9974 )
 weaponName = "magnum"
-ammoCount = 3
+ammoCount = 6
+
+[node name="Item4" parent="." instance=ExtResource( 3 )]
+position = Vector2( 477.052, 86.3017 )
+weaponName = "magnum"
+ammoCount = 6
 
 [node name="Spawns" type="Node2D" parent="."]
 
@@ -30,4 +35,16 @@ position = Vector2( 78.2869, 290.166 )
 [node name="Position2D2" type="Position2D" parent="Spawns"]
 position = Vector2( 79.6648, 117.248 )
 
+[node name="Position2D3" type="Position2D" parent="Spawns"]
+position = Vector2( 618.911, 432.228 )
+
+[node name="Position2D4" type="Position2D" parent="Spawns"]
+position = Vector2( 18.0786, 461.971 )
+
+[node name="Position2D5" type="Position2D" parent="Spawns"]
+position = Vector2( 666.788, 611.137 )
+
 [node name="Map1" parent="." instance=ExtResource( 2 )]
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color( 0, 0, 0, 1 )

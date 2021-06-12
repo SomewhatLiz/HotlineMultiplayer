@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Art/Player/sprPWalkShotgun_strip8.png" type="Texture" id=1]
 [ext_resource path="res://Scenes/Player/Player.gd" type="Script" id=2]
 [ext_resource path="res://Sounds/Gunshots/Shotgun.wav" type="AudioStream" id=3]
+[ext_resource path="res://Art/Environment/lightMask.png" type="Texture" id=4]
+[ext_resource path="res://icon.JPG" type="Texture" id=5]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 8.09406
@@ -52,17 +54,12 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PickUpArea"]
 shape = SubResource( 2 )
 
-[node name="Muzzle" type="Position2D" parent="."]
-position = Vector2( 11.9145, 2.96764 )
-
 [node name="Firerate" type="Timer" parent="."]
 process_mode = 0
 one_shot = true
 
 [node name="Respawn" type="Timer" parent="."]
 one_shot = true
-
-[node name="Offset" type="Position2D" parent="."]
 
 [node name="Gunshot" type="AudioStreamPlayer2D" parent="."]
 position = Vector2( -69.5735, 1.70267 )
@@ -72,6 +69,21 @@ bus = "Sfx"
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
 position = Vector2( 9.27029, 2.11892 )
 shape = SubResource( 3 )
+
+[node name="light" type="Light2D" parent="."]
+enabled = false
+texture = ExtResource( 4 )
+texture_scale = 3.0
+energy = 0.8
+shadow_enabled = true
+
+[node name="Muzzle" type="Position2D" parent="."]
+
+[node name="NetworkPos" type="Sprite" parent="."]
+position = Vector2( 28.1799, -0.284111 )
+scale = Vector2( 0.0113933, 0.0129667 )
+texture = ExtResource( 5 )
+
 [connection signal="area_entered" from="HitBox" to="." method="_on_HitBox_area_entered"]
 [connection signal="body_entered" from="PickUpArea" to="." method="_on_PickUpArea_body_entered"]
 [connection signal="body_exited" from="PickUpArea" to="." method="_on_PickUpArea_body_exited"]

@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scenes/Item/Gun.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Art/Items/image_part_002.png" type="Texture" id=2]
+[ext_resource path="res://Art/Player/sprPWalkM16_strip8.png" type="Texture" id=3]
+[ext_resource path="res://Art/Player/sprPBackMachinegun_strip4.png" type="Texture" id=4]
+
+[node name="Rifle" instance=ExtResource( 1 )]
+texture = ExtResource( 3 )
+offset = Vector2( 0, 0 )
+dmg = 4
+ammo = 16
+fireRate = 0.15
+itemPath = ExtResource( 2 )
+weaponName = "rifle"
+deathStrip = ExtResource( 4 )
+
+[node name="Muzzle" parent="." index="0"]
+position = Vector2( 17.1402, 1.38515 )

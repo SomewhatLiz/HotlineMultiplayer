@@ -11,6 +11,7 @@ onready var respawnTimer := $Respawn
 onready var gunshot := $Gunshot
 onready var Game := get_parent()
 onready var cam 
+onready var light := $light
 
 puppet var pos := Vector2()
 puppet var rot := 0.0
@@ -48,11 +49,13 @@ var weapons = G.weapons
 
 var teamLabel := Label.new()
 
-var currentWeapon : Dictionary = weapons["none"]
+var currentWeapon : Sprite = weapons[G.NONE]
 
 func _ready():
 	PauseMenu.teamList.get_child(0).addPlayer(teamLabel)
 	if is_network_master():
+		$NetworkPos.hide()
+		light.enabled = true
 		teamLabel.text = G.getName(get_network_master())
 		cam = camRes.instance()
 		add_child(cam)
@@ -73,7 +76,8 @@ func _ready():
 
 func _physics_process(delta):
 	if not is_network_master() and not dead:
-		position = pos
+		$NetworkPos.global_position = pos
+		position = position.linear_interpolate(pos, 0.5)
 		rotation = rot
 	elif is_network_master():
 		move()
@@ -90,6 +94,7 @@ func _input(event):
 					# sync up weapon names
 					wep.rpc("removeItem")
 		if Input.is_action_just_pressed("shoot") and fireTimer.is_stopped() and ammo > 0:
+			rset("rot", rotation)
 			rpc("shoot")
 		vel = Vector2(
 			Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"), 
@@ -97,7 +102,7 @@ func _input(event):
 			)
 
 func getWeaponFrames(weaponName) -> int:
-	var path : String = weapons[weaponName]["path"].resource_path
+	var path : String = weapons[weaponName].texture.resource_path
 	var result = regex.search_all(path)
 	return int(result[-1].get_string())
 
@@ -107,15 +112,15 @@ func getFrames(string : String) -> int:
 
 remotesync func switchWeapon(weaponName := "none", ammoCount := -1):
 	currentWeapon = weapons[weaponName]
-	sprite.position = currentWeapon["offset"]
+	sprite.offset = currentWeapon.offset
 	sprite.hframes = getWeaponFrames(weaponName)
-	sprite.texture = currentWeapon["path"]
-	muzzle.position = currentWeapon["muzzle"]
-	fireTimer.wait_time = currentWeapon["fireRate"]
-	tween.interpolate_property(sprite, "frame", 0, sprite.hframes - 1, currentWeapon["aniLength"])
-	tween.start()
+	sprite.texture = currentWeapon.texture
+	print(currentWeapon.muzzle)
+	muzzle.position = currentWeapon.muzzle.position
+	fireTimer.wait_time = currentWeapon.fireRate
+	tween.interpolate_property(sprite, "frame", 0, sprite.hframes - 1, currentWeapon.aniLength)
 	if ammoCount < 0:
-		ammo = currentWeapon["ammo"]
+		ammo = currentWeapon.ammo
 	else:
 		ammo = ammoCount
 	if is_network_master():
@@ -185,6 +190,7 @@ func respawn():
 	var spawnLocs = Game.spawnLocs
 	var spawnPos = spawnLocs.get_child(G.rng.randi() % spawnLocs.get_child_count())
 	position = spawnPos.position 
+	visible = true
 
 func setHealth(hp):
 	GUI.healthBar.value = hp
@@ -198,12 +204,13 @@ func setAmmo(am : int):
 	if is_network_master():
 		rset("ammo", ammo)
 	
-func death(killer, deathStrip : Texture, bullDirection : Vector2):
 	
-
-	# Texture
-	deadBody.texture = deathStrip
-	deadBody.hframes = getFrames(deathStrip.resource_path)
+# Add back killer when work is started on the feed
+remotesync func death(deathStripResourcePath : String, bullDirection : Vector2) -> void:
+	visible = false
+	# Texture 
+	deadBody.texture = load(deathStripResourcePath)
+	deadBody.hframes = getFrames(deathStripResourcePath)
 	deadBody.frame = G.rng.randi() % deadBody.hframes  
 	deadBody.rotation = bullDirection.angle()
 	
@@ -243,7 +250,7 @@ func _on_HitBox_area_entered(area : Area2D):
 		if is_network_master():
 			setHealth(health)
 		if health <= 0:
-			death(area.sender, area.deathStrip, area.vel)
+			rpc("death", area.deathStrip.resource_path, area.vel) #area.sender maybe add .name
 
 
 func _on_Respawn_timeout():
