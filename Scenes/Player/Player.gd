@@ -31,6 +31,7 @@ onready var deadRes := load(deadPath)
 #export(String, FILE) var secen_path
 #export (NodePath) var Menu_path
 
+signal killed
 
 var weaponI := 0
 var itemsNear := []
@@ -63,6 +64,7 @@ func _ready():
 		GUI = cam.get_node("GUI")
 		GUI.healthBar.value = health
 		G.currentPlayer = self
+		GUI.killfeed.connect("killed", self, "addDeath")
 	else:
 		set_process_input(false)
 	G.chooseTeam(hitbox)
@@ -206,7 +208,8 @@ func setAmmo(am : int):
 	
 	
 # Add back killer when work is started on the feed
-remotesync func death(deathStripResourcePath : String, bullDirection : Vector2) -> void:
+remotesync func death(deathStripResourcePath : String, bullDirection : Vector2, killer : String) -> void:
+#	emit_signal("killed", killer, G.getCurrentPlayerName())
 	visible = false
 	# Texture 
 	deadBody.texture = load(deathStripResourcePath)
@@ -244,13 +247,13 @@ func _on_PickUpArea_body_exited(body):
 
 func _on_HitBox_area_entered(area : Area2D):
 	if area.is_in_group(G.BULLET) and self != area.sender and area.penetration > 0:
-		print(area.name)
 		health -= area.dmg
 
 		if is_network_master():
 			setHealth(health)
 		if health <= 0:
-			rpc("death", area.deathStrip.resource_path, area.vel) #area.sender maybe add .name
+			print(area.sender)
+			rpc("death", area.deathStrip.resource_path, area.vel, G.getPlayerName(area.sender)) #area.sender maybe add .name
 
 
 func _on_Respawn_timeout():

@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scenes/Player/GUI.gd" type="Script" id=1]
 [ext_resource path="res://Art/Fonts/vcr_osd_mono/VCR_OSD_MONO_1.001.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Scenes/Player/Killfeed.gd" type="Script" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
@@ -77,7 +78,6 @@ void fragment() {
 
 	COLOR.rgb = textureLod(SCREEN_TEXTURE, uv, 0.0).rgb;
 }"
-custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=9]
 shader = SubResource( 8 )
@@ -88,6 +88,7 @@ shader_param/size_y = 0.001
 script = ExtResource( 1 )
 ammoPath = NodePath("Control/VBoxContainer/ammoCount")
 healthPath = NodePath("Control/VBoxContainer/healthBar")
+killfeedPath = NodePath("Control/Killfeed")
 
 [node name="Control" type="Control" parent="."]
 anchor_right = 1.0
@@ -129,6 +130,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Killfeed" type="Label" parent="Control"]
+margin_right = 280.0
+margin_bottom = 147.0
+text = "Player -X> Player
+Player -X> Player
+Player -X> Player
+Player -X> Player
+Player -X> Player
+"
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource( 9 )
 anchor_right = 1.0
@@ -137,3 +152,9 @@ mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

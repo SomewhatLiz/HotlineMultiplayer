@@ -19,7 +19,6 @@ func _on_Bullet_area_entered(area : Area2D):
 	if area.get_parent().is_in_group(G.PLAYER_HITBOX) and area.get_parent().health > 0:
 		penetration -= 1
 		if penetration < 1:
-			print(area.name)
 			queue_free()
 
 func _on_Bullet_body_entered(body):

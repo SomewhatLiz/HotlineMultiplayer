@@ -22,8 +22,6 @@ func host():
 	_player_connected(get_tree().get_network_unique_id())
 	print(get_tree().get_network_unique_id())
 	print("host")
-	for child in get_children():
-		print(child.name)
 
 func join():
 	var peer = NetworkedMultiplayerENet.new()
@@ -45,7 +43,7 @@ func _player_connected(id : int):
 		#TODO: Refactor getting teams so we dont have to index into the lists 
 		rpc_id(id, "register_player", pid, G.getTeam(pid), G.getName(pid))
 	# new guy's id, send his name
-	rpc("register_player", id, 0, playerName)
+	rpc("register_player", id, 0)
 	# Send our name
 	rpc("req_name")
 
@@ -61,19 +59,18 @@ func spawn(id: int):
 	
 	add_child(p)
 
-remotesync func register_player(id : int, team : int, playerName : String):
+remotesync func register_player(id : int, team : int):
 	# Sync all G.players
-	print("Register as ", playerName)
 	if not id in G.players:
 #		Add player to FFA team when they first join
-		G.players[id] = [team, playerName]
+		G.players[id] = [team, ""]
 		spawn(id)
-		setNameLocal(id, playerName)
+		setNameLocal(id, "")
 		# [1] = [0, "aaa"]
 
 remotesync func setName(newPlayerName: String):
 	var senderId = get_tree().get_rpc_sender_id()
-	print("Sett as ", newPlayerName)
+	print("Set as ", newPlayerName)
 	setNameLocal(senderId, newPlayerName)
 
 func setNameLocal(pid : int, newPlayerName : String):

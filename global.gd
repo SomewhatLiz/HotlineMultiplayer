@@ -14,7 +14,7 @@ const RIFLE := "rifle"
 var rng := RandomNumberGenerator.new()
 var players := {}
 # Players is a dictonary of lists containing each players info
-# players[pid] -> [teamNumber, playerName]
+# players[pid: int] -> [teamNumber, playerName]
 
 var currentPlayer : KinematicBody2D
 var teamNames := ["FFA"]
@@ -47,6 +47,12 @@ remotesync func setFriendlyFire(enabled : bool):
 # getTeam(1) -> 0 (freeForAll)
 func getTeam(playerId : int) -> int:
 	return players[playerId][0]
+
+func getPlayerName(player):
+	return getPlayerName(players[int(player.name)][1])
+
+func getCurrentPlayerName():
+	return getPlayerName(currentPlayer)
 
 func setTeam(playerId: int, teamIndex) -> void:
 	players[playerId][0] = teamIndex
