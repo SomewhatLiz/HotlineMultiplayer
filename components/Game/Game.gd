@@ -15,6 +15,7 @@ onready var spawnLocs = $Spawns
 #remote var G.players := {}
 
 func host():
+	playerName = "Host"
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(PORT)
 	get_tree().set_network_peer(peer)
@@ -24,6 +25,7 @@ func host():
 	print("host")
 
 func join():
+	playerName = "Client"
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client("127.0.0.1", PORT)
 	get_tree().set_network_peer(peer)
@@ -41,8 +43,8 @@ func _player_connected(id : int):
 		
 		# Spawning old guys on our new guy, Get everyone else's names
 		#TODO: Refactor getting teams so we dont have to index into the lists 
-		rpc_id(id, "register_player", pid, G.getTeam(pid), G.getName(pid))
-	# new guy's id, send his name
+		rpc_id(id, "register_player", pid, G.getTeam(pid))
+	# new guy's id, send his name, team
 	rpc("register_player", id, 0)
 	# Send our name
 	rpc("req_name")
@@ -61,6 +63,7 @@ func spawn(id: int):
 
 remotesync func register_player(id : int, team : int):
 	# Sync all G.players
+	print("registering ", str(id))
 	if not id in G.players:
 #		Add player to FFA team when they first join
 		G.players[id] = [team, ""]
